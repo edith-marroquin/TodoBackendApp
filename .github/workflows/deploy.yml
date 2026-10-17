@@ -1,0 +1,33 @@
+name: Deploy Node.js App to Azure 
+ 
+on: 
+  push: 
+    branches: 
+      - main  # Triggers the pipeline when you push to main 
+ 
+jobs: 
+  build-and-deploy: 
+    runs-on: ubuntu-latest 
+ 
+    steps: 
+    - name: Checkout Source Code 
+      uses: actions/checkout@v4 
+      with: 
+        fetch-depth: 0 # Ensures all git history is fetched for the deployment push 
+ 
+    - name: Set up Node.js 
+      uses: actions/setup-node@v4 
+      with: 
+        node-version: '20' 
+ 
+    - name: Install Dependencies 
+      run: npm install 
+ 
+    # You could run tests here: run: npm test 
+ 
+    - name: Deploy to Azure Web App via Git 
+      run: | 
+        git config --global user.email "github-actions@github.com" 
+        git config --global user.name "GitHub Actions" 
+        git remote add azure ${{ secrets.AZURE_DEPLOY_URL }} 
+        git push azure main:master --force
